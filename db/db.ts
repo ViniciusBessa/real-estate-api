@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const connectDB = (uri: string) => {
-  mongoose.connect(uri);
+  return mongoose.connect(uri);
 };
 
 export default connectDB;
