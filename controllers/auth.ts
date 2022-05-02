@@ -17,13 +17,13 @@ const loginUser = asyncWrapper(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError('Por favor, inclua seu email e senha');
+    throw new BadRequestError('Por favor, informe seu e-mail e senha');
   }
   const user = await User.findOne({ email });
 
   if (!user) {
     throw new NotFoundError(
-      `Nenhum usuário com o email ${email} foi encontrado`
+      `Nenhum usuário com o e-mail ${email} foi encontrado`
     );
   }
   const passwordMatches = await user.comparePassword(password);
@@ -38,7 +38,7 @@ const loginUser = asyncWrapper(async (req: Request, res: Response) => {
 
 const logoutUser = asyncWrapper(async (req: Request, res: Response) => {
   res.clearCookie('token');
-  res.status(StatusCodes.OK).json();
+  res.status(StatusCodes.NO_CONTENT).json();
 });
 
 export { registerUser, loginUser, logoutUser };

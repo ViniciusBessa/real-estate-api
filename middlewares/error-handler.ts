@@ -12,7 +12,11 @@ const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, next) => {
     customError.message = errors.map((error: any) => error.message);
     customError.statusCode = StatusCodes.BAD_REQUEST;
   }
-  if (err.code === 11000) {
+  else if (err.name === 'CastError') {
+    customError.message = `ID ${err.value} é inválido`;
+    customError.statusCode = StatusCodes.BAD_REQUEST;
+  }
+  else if (err.code === 11000) {
     let [duplicateField] = Object.keys(err.keyValue);
     let [error] = Object.values(err.keyValue);
     error = `${error} já está em uso`;

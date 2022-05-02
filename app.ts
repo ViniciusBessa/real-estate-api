@@ -13,13 +13,16 @@ app.use(cookieParser(process.env.JWT_SECRET));
 import notFound from './middlewares/not-found';
 import errorHandler from './middlewares/error-handler';
 import authentication from './middlewares/authentication';
+import loginRequired from './middlewares/login-required';
 
 app.use(authentication);
 
 // Routes
 import authRouter from './routes/auth';
+import userRouter from './routes/user';
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/user', loginRequired, userRouter);
 
 app.use(notFound);
 app.use(errorHandler);

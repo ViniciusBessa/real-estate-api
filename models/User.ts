@@ -51,6 +51,8 @@ UserSchema.methods.getUserInfo = function (): UserInfo {
     name: this.name,
     email: this.email,
     role: this.role,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
   };
 };
 
