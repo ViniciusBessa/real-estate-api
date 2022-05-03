@@ -38,12 +38,10 @@ const updateUsername = asyncWrapper(async (req: Request, res: Response) => {
   ).select('-password');
   const newToken = createToken(userData.getUserInfo());
   sendTokenAsCookie(res, newToken);
-  res
-    .status(StatusCodes.OK)
-    .json({
-      user: userData.getUserInfo(),
-      msg: 'Nome atualizado com sucesso!',
-    });
+  res.status(StatusCodes.OK).json({
+    user: userData.getUserInfo(),
+    msg: 'Nome atualizado com sucesso!',
+  });
 });
 
 const updateEmail = asyncWrapper(async (req: Request, res: Response) => {

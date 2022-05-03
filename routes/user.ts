@@ -13,8 +13,8 @@ const router: Router = Router();
 router.route('/').get(getAllUsers);
 router.route('/getCurrentUser').get(getCurrentUser);
 router.route('/:userId').get(getSingleUser);
-router.route('/updateUserName').patch(updateUsername);
-router.route('/UpdateUserEmail').patch(updateEmail);
-router.route('/UpdateUserPassword').patch(updatePassword);
+router.route('/updateUsername').patch(updateUsername);
+router.route('/updateEmail').patch(updateEmail);
+router.route('/updatePassword').patch(updatePassword);
 
 export default router;

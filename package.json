@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "start-dev": "tsnd --files server.ts",
-    "test": "jest",
+    "test": "ts-node ./db/reset-test-db && jest",
     "postinstall": "tsc"
   },
   "repository": {
@@ -41,6 +41,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.1",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/supertest": "^2.0.12",
     "jest": "^27.5.1",
     "supertest": "^6.2.3",
     "ts-jest": "^27.1.4",

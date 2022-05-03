@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { SchemaDefinitionProperty } from 'mongoose';
 import bcrypt from 'bcrypt';
 import UserInfo from '../types/user-info';
 
@@ -8,18 +8,26 @@ const UserSchema = new mongoose.Schema(
       type: String,
       minlength: [6, 'O nome de usuário deve ter pelo menos 6 caracteres'],
       maxlength: [20, 'O nome de usuário só pode ter até 20 caracteres'],
-      required: [true, 'É necessário passar um nome de usuário'],
+      required: [true, 'Por favor, informe um nome de usuário'],
       trim: true,
       unique: true,
     },
     password: {
       type: String,
-      required: [true, 'Uma senha deve ser especificada'],
+      required: [true, 'Por favor, informe uma senha'],
       trim: true,
     },
     email: {
       type: String,
-      required: [true, 'Um email deve ser especificado'],
+      required: [true, 'Por favor, informe seu e-mail'],
+      validate: {
+        validator: function (value: string) {
+          const emailRegex = /[a-z0-9.]+@[a-z0-9]+\.[a-z]+(.[a-z]+)?/;
+          return emailRegex.test(value);
+        },
+        message: (prop: any) =>
+          `${prop.value} não é um e-mail válido!`,
+      },
       trim: true,
       unique: true,
     },
