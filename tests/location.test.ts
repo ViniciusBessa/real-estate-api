@@ -5,7 +5,7 @@ import app from '../app';
 import connectDB from '../db/db';
 
 describe('Location Endpoints', () => {
-  let requestTest: SuperTest<Test> = supertest(app);
+  const requestTest: SuperTest<Test> = supertest(app);
   const firstLocationId = '62735070d47b87fb917de79e';
   const secondLocationId = '62735070d47b87fb917de79d';
   const wrongLocationId = '62735070d47b87fb917de793';
@@ -58,7 +58,7 @@ describe('Location Endpoints', () => {
   });
 
   // Testing the route POST /api/v1/locations
-  it('POST /api/v1/locations should create a new location', async () => {
+  it('POST /api/v1/locations should create and return a new location', async () => {
     const response = await requestTest
       .post('/api/v1/locations')
       .send({ state: 'Minas Gerais', city: 'Belo Horizonte' });
@@ -74,7 +74,7 @@ describe('Location Endpoints', () => {
   });
 
   // Testing the route PATCH /api/v1/locations/:locationId
-  it('PATCH /api/v1/locations/:locationId should return one location', async () => {
+  it('PATCH /api/v1/locations/:locationId should update and return one location', async () => {
     const response = await requestTest
       .patch(`/api/v1/locations/${firstLocationId}`)
       .send({ city: 'Parintins' });
@@ -82,7 +82,7 @@ describe('Location Endpoints', () => {
     expect(response.body.location).toBeTruthy();
   });
 
-  it('PATCH /api/v1/locations/:locationId should fail to return a location with error 404', async () => {
+  it('PATCH /api/v1/locations/:locationId should fail to update a location with error 404', async () => {
     const response = await requestTest
       .patch(`/api/v1/locations/${wrongLocationId}`)
       .send({ city: 'Parintins' });
@@ -91,7 +91,7 @@ describe('Location Endpoints', () => {
   });
 
   // Testing the route DELETE /api/v1/locations/:locationId
-  it('DELETE /api/v1/locations/:locationId should delete a location', async () => {
+  it('DELETE /api/v1/locations/:locationId should delete and return one location', async () => {
     const response = await requestTest.delete(
       `/api/v1/locations/${secondLocationId}`
     );

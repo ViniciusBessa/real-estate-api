@@ -20,10 +20,12 @@ app.use(authentication);
 // Routes
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
+import propertyRouter from './routes/property';
 import locationRouter from './routes/location';
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', loginRequired, userRouter);
+app.use('/api/v1/properties', propertyRouter);
 app.use('/api/v1/locations', locationRouter);
 
 app.use(notFound);

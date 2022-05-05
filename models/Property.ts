@@ -14,10 +14,16 @@ const PropertySchema = new mongoose.Schema(
       required: [true, 'Por favor, informe a descrição do anúncio'],
       trim: true,
     },
+    price: {
+      type: Number,
+      min: [100, 'O custo deve ser de pelo menos cem reais'],
+      max: [10000000, 'O imóvel só pode custar até dez milhões de reais'],
+      required: [true, 'Por favor, informe o valor do imóvel'],
+    },
     location: {
       type: mongoose.Types.ObjectId,
       ref: 'Location',
-      required: [true, 'Por favor, informe a localização do imóvel'],
+      required: [true, 'Por favor, informe o ID da localização do imóvel'],
     },
     announcer: {
       type: mongoose.Types.ObjectId,

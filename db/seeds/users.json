@@ -1,10 +1,12 @@
 [
   {
+    "_id": "6274554605ebef471497257d",
     "name": "ClaraGala",
     "email": "clara.gala@gmail.com",
     "password": "clarag"
   },
   {
+    "_id": "6274554605ebef471497257e",
     "name": "JohnSmith",
     "email": "john.smith@gmail.com",
     "password": "password1"

@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "62745b5512a234d707653267",
+    "title": "House for sale!",
+    "description": "A good house",
+    "price": 250000,
+    "location": "62735070d47b87fb917de79b",
+    "announcer": "6274554605ebef471497257e",
+    "announceType": "sale",
+    "petAllowed": false,
+    "numberBedrooms": 3,
+    "numberBathrooms": 2,
+    "hasGarage": true,
+    "images": ["randomImageUrl.com", "randomImageUrl.com"]
+  },
+  {
+    "_id": "62745b5512a234d707653268",
+    "title": "House for sale!",
+    "description": "A good house",
+    "price": 200000,
+    "location": "62735070d47b87fb917de79d",
+    "announcer": "6274554605ebef471497257d",
+    "announceType": "sale",
+    "petAllowed": false,
+    "numberBedrooms": 3,
+    "numberBathrooms": 1,
+    "hasGarage": false,
+    "images": ["randomImageUrl.com", "randomImageUrl.com", "randomImageUrl.com"]
+  },
+  {
+    "_id": "62745b5512a234d707653269",
+    "title": "House for rent!",
+    "description": "A good house",
+    "price": 3000,
+    "location": "62735070d47b87fb917de79c",
+    "announcer": "6274554605ebef471497257d",
+    "announceType": "rent",
+    "petAllowed": true,
+    "numberBedrooms": 4,
+    "numberBathrooms": 2,
+    "hasGarage": true,
+    "images": ["randomImageUrl.com"]
+  }
+]

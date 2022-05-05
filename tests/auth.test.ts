@@ -5,7 +5,7 @@ import app from '../app';
 import connectDB from '../db/db';
 
 describe('Auth endpoints', () => {
-  let requestTest: SuperTest<Test> = supertest(app);
+  const requestTest: SuperTest<Test> = supertest(app);
 
   beforeAll(async () => {
     // Connecting to the test database
