@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "start-dev": "tsnd --files server.ts",
-    "test": "ts-node ./db/reset-test-db && jest",
+    "test": "ts-node ./db/reset-test-db && jest --forceExit",
     "postinstall": "tsc"
   },
   "repository": {

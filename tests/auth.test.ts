@@ -1,19 +1,20 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import supertest, { SuperTest, Test } from 'supertest';
 import app from '../app';
 import connectDB from '../db/db';
 
 describe('Auth endpoints', () => {
-  let requestTest: SuperTest<Test>;
+  let requestTest: SuperTest<Test> = supertest(app);
 
   beforeAll(async () => {
-    // Connecting to the testing database
+    // Connecting to the test database
     await connectDB(process.env.TEST_MONGO_URI as string);
   });
 
-  beforeEach(() => {
-    requestTest = supertest(app);
-  })
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
 
   // Testing the register route
   it('POST /api/v1/auth/register should register a new user', async () => {

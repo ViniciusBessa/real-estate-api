@@ -1,4 +1,4 @@
-import mongoose, { SchemaDefinitionProperty } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import UserInfo from '../types/user-info';
 
@@ -25,8 +25,7 @@ const UserSchema = new mongoose.Schema(
           const emailRegex = /[a-z0-9.]+@[a-z0-9]+\.[a-z]+(.[a-z]+)?/;
           return emailRegex.test(value);
         },
-        message: (prop: any) =>
-          `${prop.value} não é um e-mail válido!`,
+        message: (prop: any) => `${prop.value} não é um e-mail válido!`,
       },
       trim: true,
       unique: true,
@@ -35,9 +34,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: ['user', 'announcer', 'admin'],
-        message: ['{VALUE} não é um valor válido'],
+        message: '{VALUE} não é um valor válido',
       },
       default: 'user',
+      trim: true,
     },
   },
   { timestamps: true }

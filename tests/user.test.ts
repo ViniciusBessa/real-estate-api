@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import supertest, { SuperTest, Test } from 'supertest';
 import app from '../app';
 import connectDB from '../db/db';
@@ -12,28 +13,29 @@ describe('User endpoints with a user that is not logged', () => {
     await connectDB(process.env.TEST_MONGO_URI as string);
   });
 
-  // Testing the getAllUsers route
-  it('GET api/v1/user/ should fail with error 401', async () => {
-    const response = await requestTest
-      .get('/api/v1/user')
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  // Testing the route GET api/v1/users
+  it('GET api/v1/users should fail with error 401', async () => {
+    const response = await requestTest.get('/api/v1/users');
     expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     expect(response.body.users).toBeFalsy();
     expect(response.body.numberOfUsers).toBeFalsy();
   });
 
-  // Testing the getSingleUser route
-  it('GET api/v1/user/:userId should fail with error 401', async () => {
+  // Testing the route GET api/v1/users/:userId
+  it('GET api/v1/users/:userId should fail with error 401', async () => {
     const [firstUser] = await User.find();
-    const response = await requestTest
-      .get(`/api/v1/user/${firstUser._id}`)
+    const response = await requestTest.get(`/api/v1/users/${firstUser._id}`);
     expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     expect(response.body.user).toBeFalsy();
   });
 
-  // Testing the getCurrentUser route
-  it('GET api/v1/user/getCurrentUser should fail with error 401', async () => {
-    const response = await requestTest
-      .get('/api/v1/user/getCurrentUser')
+  // Testing the route GET api/v1/users/getCurrentUser
+  it('GET api/v1/users/getCurrentUser should fail with error 401', async () => {
+    const response = await requestTest.get('/api/v1/users/getCurrentUser');
     expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     expect(response.body.user).toBeFalsy();
   });
@@ -60,39 +62,43 @@ describe('User endpoints with a logged user', () => {
     userCookie = response.headers['set-cookie'];
   });
 
-  // Testing the getAllUsers route
-  it('GET api/v1/user/ should retrieve all users', async () => {
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  // Testing the route GET api/v1/users
+  it('GET api/v1/users should retrieve all users', async () => {
     const response = await requestTest
-      .get('/api/v1/user')
+      .get('/api/v1/users')
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.OK);
     expect(response.body.users).toBeTruthy();
     expect(response.body.numberOfUsers).toBeTruthy();
   });
 
-  // Testing the getSingleUser route
-  it('GET api/v1/user/:userId should retrieve the first user', async () => {
+  // Testing the route GET api/v1/users/:userId
+  it('GET api/v1/users/:userId should retrieve the first user', async () => {
     const [firstUser] = await User.find();
     const response = await requestTest
-      .get(`/api/v1/user/${firstUser._id}`)
+      .get(`/api/v1/users/${firstUser._id}`)
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.OK);
     expect(response.body.user).toBeTruthy();
   });
 
-  // Testing the getCurrentUser route
-  it('GET api/v1/user/getCurrentUser should retrieve current user', async () => {
+  // Testing the route GET api/v1/users/getCurrentUser
+  it('GET api/v1/users/getCurrentUser should retrieve current user', async () => {
     const response = await requestTest
-      .get('/api/v1/user/getCurrentUser')
+      .get('/api/v1/users/getCurrentUser')
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.OK);
     expect(response.body.user).toBeTruthy();
   });
 
-  // Testing the updateUsername route
-  it("PATCH api/v1/user/updateUsername should update the user's name", async () => {
+  // Testing the route PATCH api/v1/users/updateUsername
+  it("PATCH api/v1/users/updateUsername should update the user's name", async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updateUsername')
+      .patch('/api/v1/users/updateUsername')
       .send({
         name: 'NewUsername',
       })
@@ -101,54 +107,54 @@ describe('User endpoints with a logged user', () => {
     expect(response.body.user).toBeTruthy();
   });
 
-  it('PATCH api/v1/user/updateUsername should fail to update the name with error 400', async () => {
+  it('PATCH api/v1/users/updateUsername should fail to update the name with error 400', async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updateUsername')
+      .patch('/api/v1/users/updateUsername')
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(response.body.user).toBeFalsy();
   });
 
-  // Testing the updateEmail route
-  it("PATCH api/v1/user/updateEmail should update the user's email", async () => {
+  // Testing the route PATCH api/v1/users/updateEmail
+  it("PATCH api/v1/users/updateEmail should update the user's email", async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updateEmail')
+      .patch('/api/v1/users/updateEmail')
       .send({ email: 'new.email@gmail.com' })
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.OK);
     expect(response.body.user).toBeTruthy();
   });
 
-  it('PATCH api/v1/user/updateEmail should fail to update the email with 400', async () => {
+  it('PATCH api/v1/users/updateEmail should fail to update the email with 400', async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updateEmail')
+      .patch('/api/v1/users/updateEmail')
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(response.body.user).toBeFalsy();
   });
 
-  // Testing the updatePassword route
-  it("PATCH api/v1/user/updatePassword should update the user's password", async () => {
+  // Testing the route PATCH api/v1/users/updatePassword
+  it("PATCH api/v1/users/updatePassword should update the user's password", async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updatePassword')
+      .patch('/api/v1/users/updatePassword')
       .send({ currentPassword: 'password1', newPassword: 'password2' })
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.OK);
     expect(response.body.msg).toBeTruthy();
   });
 
-  it("PATCH api/v1/user/updatePassword should fail because the user didn't pass the current password", async () => {
+  it("PATCH api/v1/users/updatePassword should fail because the user didn't pass the current password", async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updatePassword')
+      .patch('/api/v1/users/updatePassword')
       .send({ newPassword: 'password2' })
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(response.body.msg).toBeFalsy();
   });
 
-  it('PATCH api/v1/user/updatePassword should fail because the current password is wrong', async () => {
+  it('PATCH api/v1/users/updatePassword should fail because the current password is wrong', async () => {
     const response = await requestTest
-      .patch('/api/v1/user/updatePassword')
+      .patch('/api/v1/users/updatePassword')
       .send({ currentPassword: 'wrongpassword', newPassword: 'password3' })
       .set('Cookie', userCookie);
     expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);

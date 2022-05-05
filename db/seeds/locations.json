@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "62735070d47b87fb917de79b",
+    "state": "Acre",
+    "city": "Rio Branco"
+  },
+  {
+    "_id": "62735070d47b87fb917de79c",
+    "state": "Bahia",
+    "city": "Salvador"
+  },
+  {
+    "_id": "62735070d47b87fb917de79d",
+    "state": "São Paulo",
+    "city": "São Paulo"
+  },
+  {
+    "_id": "62735070d47b87fb917de79e",
+    "state": "Amazonas",
+    "city": "Manaus"
+  },
+  {
+    "_id": "62735070d47b87fb917de79f",
+    "state": "Rio de Janeiro",
+    "city": "Rio de Janeiro"
+  }
+]
