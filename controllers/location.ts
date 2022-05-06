@@ -17,10 +17,12 @@ const getAllLocations = asyncWrapper(async (req: Request, res: Response) => {
   }
   let locationsResult = Location.find(queryObject);
 
+  // Sorting the query by the requested fields
   if (sort) {
     const sortingList: string = (<string>sort).split(',').join(' ');
     locationsResult.sort(sortingList);
   }
+  // Selecting only the requested fields
   if (select) {
     const selectList: string = (<string>select).split(',').join(' ');
     locationsResult.select(selectList);

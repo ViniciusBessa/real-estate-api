@@ -30,8 +30,8 @@ describe('User Endpoints', () => {
     it('GET api/v1/users/:userId should fail with error 401', async () => {
       const [firstUser] = await User.find();
       const response = await requestTest.get(`/api/v1/users/${firstUser._id}`);
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
-      expect(response.body.user).toBeFalsy();
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.user).toBeTruthy();
     });
 
     // Testing the route GET api/v1/users/getCurrentUser
@@ -48,7 +48,6 @@ describe('User Endpoints', () => {
 
     beforeAll(async () => {
       const userData = {
-        name: 'JohnSmith',
         email: 'john.smith@gmail.com',
         password: 'password1',
       };
@@ -61,13 +60,13 @@ describe('User Endpoints', () => {
     });
 
     // Testing the route GET api/v1/users
-    it('GET api/v1/users should retrieve all users', async () => {
+    it('GET api/v1/users should fail to retrieve all users with error 403', async () => {
       const response = await requestTest
         .get('/api/v1/users')
         .set('Cookie', userCookie);
-      expect(response.statusCode).toBe(StatusCodes.OK);
-      expect(response.body.users).toBeTruthy();
-      expect(response.body.numberOfUsers).toBeTruthy();
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      expect(response.body.users).toBeFalsy();
+      expect(response.body.numberOfUsers).toBeFalsy();
     });
 
     // Testing the route GET api/v1/users/:userId
@@ -132,6 +131,119 @@ describe('User Endpoints', () => {
       const response = await requestTest
         .patch('/api/v1/users/updatePassword')
         .send({ currentPassword: 'password1', newPassword: 'password2' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.msg).toBeTruthy();
+    });
+
+    it("PATCH api/v1/users/updatePassword should fail because the user didn't pass the current password", async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updatePassword')
+        .send({ newPassword: 'password2' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.msg).toBeFalsy();
+    });
+
+    it('PATCH api/v1/users/updatePassword should fail because the current password is wrong', async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updatePassword')
+        .send({ currentPassword: 'wrongpassword', newPassword: 'password3' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.msg).toBeFalsy();
+    });
+  });
+
+  describe('User endpoints with a admin', () => {
+    const requestTest: SuperTest<Test> = supertest(app);
+    let userCookie: string;
+
+    beforeAll(async () => {
+      const userData = {
+        email: 'michael.alley@gmail.com',
+        password: 'password2',
+      };
+
+      // Getting the user cookie
+      const response = await requestTest
+        .post('/api/v1/auth/login')
+        .send(userData);
+      userCookie = response.headers['set-cookie'];
+    });
+
+    // Testing the route GET api/v1/users
+    it('GET api/v1/users should retrieve all users', async () => {
+      const response = await requestTest
+        .get('/api/v1/users')
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.users).toBeTruthy();
+      expect(response.body.numberOfUsers).toBeTruthy();
+    });
+
+    // Testing the route GET api/v1/users/:userId
+    it('GET api/v1/users/:userId should retrieve the first user', async () => {
+      const [firstUser] = await User.find();
+      const response = await requestTest
+        .get(`/api/v1/users/${firstUser._id}`)
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.user).toBeTruthy();
+    });
+
+    // Testing the route GET api/v1/users/getCurrentUser
+    it('GET api/v1/users/getCurrentUser should retrieve current user', async () => {
+      const response = await requestTest
+        .get('/api/v1/users/getCurrentUser')
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.user).toBeTruthy();
+    });
+
+    // Testing the route PATCH api/v1/users/updateUsername
+    it("PATCH api/v1/users/updateUsername should update the user's name", async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updateUsername')
+        .send({
+          name: 'NewUsername2',
+        })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.user).toBeTruthy();
+    });
+
+    it('PATCH api/v1/users/updateUsername should fail to update the name with error 400', async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updateUsername')
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.user).toBeFalsy();
+    });
+
+    // Testing the route PATCH api/v1/users/updateEmail
+    it("PATCH api/v1/users/updateEmail should update the user's email", async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updateEmail')
+        .send({ email: 'new.email2@gmail.com' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.user).toBeTruthy();
+    });
+
+    it('PATCH api/v1/users/updateEmail should fail to update the email with 400', async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updateEmail')
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.user).toBeFalsy();
+    });
+
+    // Testing the route PATCH api/v1/users/updatePassword
+    it("PATCH api/v1/users/updatePassword should update the user's password", async () => {
+      const response = await requestTest
+        .patch('/api/v1/users/updatePassword')
+        .send({ currentPassword: 'password2', newPassword: 'password3' })
         .set('Cookie', userCookie);
       expect(response.statusCode).toBe(StatusCodes.OK);
       expect(response.body.msg).toBeTruthy();

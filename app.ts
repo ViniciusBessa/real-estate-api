@@ -13,7 +13,6 @@ app.use(cookieParser(process.env.JWT_SECRET));
 import notFound from './middlewares/not-found';
 import errorHandler from './middlewares/error-handler';
 import authentication from './middlewares/authentication';
-import loginRequired from './middlewares/login-required';
 
 app.use(authentication);
 
@@ -24,7 +23,7 @@ import propertyRouter from './routes/property';
 import locationRouter from './routes/location';
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/users', loginRequired, userRouter);
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1/properties', propertyRouter);
 app.use('/api/v1/locations', locationRouter);
 

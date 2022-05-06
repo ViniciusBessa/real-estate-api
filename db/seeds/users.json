@@ -10,5 +10,12 @@
     "name": "JohnSmith",
     "email": "john.smith@gmail.com",
     "password": "password1"
+  },
+  {
+    "_id": "6274554605ebef471497257f",
+    "name": "MichaelAlley",
+    "email": "michael.alley@gmail.com",
+    "password": "password2",
+    "role": "admin"
   }
 ]

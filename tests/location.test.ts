@@ -19,91 +19,181 @@ describe('Location Endpoints', () => {
     await mongoose.connection.close();
   });
 
-  // Testing the route GET /api/v1/locations
-  it('GET /api/v1/locations should return five locations', async () => {
-    const response = await requestTest.get('/api/v1/locations');
-    expect(response.statusCode).toBe(StatusCodes.OK);
-    expect(response.body.locations).toBeTruthy();
-    expect(response.body.numberOfLocations).toBe(5);
+  describe('Location endpoints with a user that is not logged', () => {
+    // Testing the route GET /api/v1/locations
+    it('GET /api/v1/locations should return five locations', async () => {
+      const response = await requestTest.get('/api/v1/locations');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.locations).toBeTruthy();
+      expect(response.body.numberOfLocations).toBe(5);
+    });
+
+    it('GET /api/v1/locations?city=rio should return two locations', async () => {
+      const response = await requestTest.get('/api/v1/locations?city=rio');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.locations).toBeTruthy();
+      expect(response.body.numberOfLocations).toBe(2);
+    });
+
+    // Testing the route GET /api/v1/locations/:locationId
+    it('GET /api/v1/locations/:locationId should return one location', async () => {
+      const response = await requestTest.get(
+        `/api/v1/locations/${firstLocationId}`
+      );
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.location).toBeTruthy();
+    });
+
+    it('GET /api/v1/locations/:locationId should fail to return a location with error 404', async () => {
+      const response = await requestTest.get(
+        `/api/v1/locations/${wrongLocationId}`
+      );
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body.location).toBeFalsy();
+    });
+
+    it('GET /api/v1/locations/:locationId should fail to return a location with error 400', async () => {
+      const response = await requestTest.get(`/api/v1/locations/badId`);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route POST /api/v1/locations
+    it('POST /api/v1/locations should fail with error 401', async () => {
+      const response = await requestTest
+        .post('/api/v1/locations')
+        .send({ state: 'Minas Gerais', city: 'Belo Horizonte' });
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route PATCH /api/v1/locations/:locationId
+    it('PATCH /api/v1/locations/:locationId should fail with error 401', async () => {
+      const response = await requestTest
+        .patch(`/api/v1/locations/${firstLocationId}`)
+        .send({ city: 'Parintins' });
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route DELETE /api/v1/locations/:locationId
+    it('DELETE /api/v1/locations/:locationId should fail with error 401', async () => {
+      const response = await requestTest.delete(
+        `/api/v1/locations/${secondLocationId}`
+      );
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      expect(response.body.location).toBeFalsy();
+    });
   });
 
-  it('GET /api/v1/locations?city=rio should return two locations', async () => {
-    const response = await requestTest.get('/api/v1/locations?city=rio');
-    expect(response.statusCode).toBe(StatusCodes.OK);
-    expect(response.body.locations).toBeTruthy();
-    expect(response.body.numberOfLocations).toBe(2);
-  });
+  describe('Location endpoints with a admin', () => {
+    const requestTest: SuperTest<Test> = supertest(app);
+    let userCookie: string;
 
-  // Testing the route GET /api/v1/locations/:locationId
-  it('GET /api/v1/locations/:locationId should return one location', async () => {
-    const response = await requestTest.get(
-      `/api/v1/locations/${firstLocationId}`
-    );
-    expect(response.statusCode).toBe(StatusCodes.OK);
-    expect(response.body.location).toBeTruthy();
-  });
+    beforeAll(async () => {
+      const userData = {
+        email: 'michael.alley@gmail.com',
+        password: 'password2',
+      };
 
-  it('GET /api/v1/locations/:locationId should fail to return a location with error 404', async () => {
-    const response = await requestTest.get(
-      `/api/v1/locations/${wrongLocationId}`
-    );
-    expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
-    expect(response.body.location).toBeFalsy();
-  });
+      // Getting the user cookie
+      const response = await requestTest
+        .post('/api/v1/auth/login')
+        .send(userData);
+      userCookie = response.headers['set-cookie'];
+    });
 
-  it('GET /api/v1/locations/:locationId should fail to return a location with error 400', async () => {
-    const response = await requestTest.get(`/api/v1/locations/badId`);
-    expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
-    expect(response.body.location).toBeFalsy();
-  });
+    // Testing the route GET /api/v1/locations
+    it('GET /api/v1/locations should return five locations', async () => {
+      const response = await requestTest.get('/api/v1/locations');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.locations).toBeTruthy();
+      expect(response.body.numberOfLocations).toBe(5);
+    });
 
-  // Testing the route POST /api/v1/locations
-  it('POST /api/v1/locations should create and return a new location', async () => {
-    const response = await requestTest
-      .post('/api/v1/locations')
-      .send({ state: 'Minas Gerais', city: 'Belo Horizonte' });
-    expect(response.statusCode).toBe(StatusCodes.CREATED);
-    expect(response.body.location).toBeTruthy();
-  });
+    it('GET /api/v1/locations?city=rio should return two locations', async () => {
+      const response = await requestTest.get('/api/v1/locations?city=rio');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.locations).toBeTruthy();
+      expect(response.body.numberOfLocations).toBe(2);
+    });
 
-  it('POST /api/v1/locations should fail to create a location with error 400', async () => {
-    const response = await requestTest.post('/api/v1/locations');
-    expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
-    expect(response.body.location).toBeFalsy();
-    expect(response.body.err).toHaveLength(2);
-  });
+    // Testing the route GET /api/v1/locations/:locationId
+    it('GET /api/v1/locations/:locationId should return one location', async () => {
+      const response = await requestTest.get(
+        `/api/v1/locations/${firstLocationId}`
+      );
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.location).toBeTruthy();
+    });
 
-  // Testing the route PATCH /api/v1/locations/:locationId
-  it('PATCH /api/v1/locations/:locationId should update and return one location', async () => {
-    const response = await requestTest
-      .patch(`/api/v1/locations/${firstLocationId}`)
-      .send({ city: 'Parintins' });
-    expect(response.statusCode).toBe(StatusCodes.OK);
-    expect(response.body.location).toBeTruthy();
-  });
+    it('GET /api/v1/locations/:locationId should fail to return a location with error 404', async () => {
+      const response = await requestTest.get(
+        `/api/v1/locations/${wrongLocationId}`
+      );
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body.location).toBeFalsy();
+    });
 
-  it('PATCH /api/v1/locations/:locationId should fail to update a location with error 404', async () => {
-    const response = await requestTest
-      .patch(`/api/v1/locations/${wrongLocationId}`)
-      .send({ city: 'Parintins' });
-    expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
-    expect(response.body.location).toBeFalsy();
-  });
+    it('GET /api/v1/locations/:locationId should fail to return a location with error 400', async () => {
+      const response = await requestTest.get(`/api/v1/locations/badId`);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.location).toBeFalsy();
+    });
 
-  // Testing the route DELETE /api/v1/locations/:locationId
-  it('DELETE /api/v1/locations/:locationId should delete and return one location', async () => {
-    const response = await requestTest.delete(
-      `/api/v1/locations/${secondLocationId}`
-    );
-    expect(response.statusCode).toBe(StatusCodes.OK);
-    expect(response.body.location).toBeTruthy();
-  });
+    // Testing the route POST /api/v1/locations
+    it('POST /api/v1/locations should create and return a new location', async () => {
+      const response = await requestTest
+        .post('/api/v1/locations')
+        .send({ state: 'Minas Gerais', city: 'Belo Horizonte' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.CREATED);
+      expect(response.body.location).toBeTruthy();
+    });
 
-  it('DELETE /api/v1/locations/:locationId should fail to delete a location with error 404', async () => {
-    const response = await requestTest.delete(
-      `/api/v1/locations/${wrongLocationId}`
-    );
-    expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
-    expect(response.body.location).toBeFalsy();
+    it('POST /api/v1/locations should fail to create a location with error 400', async () => {
+      const response = await requestTest
+        .post('/api/v1/locations')
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.location).toBeFalsy();
+      expect(response.body.err).toHaveLength(2);
+    });
+
+    // Testing the route PATCH /api/v1/locations/:locationId
+    it('PATCH /api/v1/locations/:locationId should update and return one location', async () => {
+      const response = await requestTest
+        .patch(`/api/v1/locations/${firstLocationId}`)
+        .send({ city: 'Parintins' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.location).toBeTruthy();
+    });
+
+    it('PATCH /api/v1/locations/:locationId should fail to update a location with error 404', async () => {
+      const response = await requestTest
+        .patch(`/api/v1/locations/${wrongLocationId}`)
+        .send({ city: 'Parintins' })
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route DELETE /api/v1/locations/:locationId
+    it('DELETE /api/v1/locations/:locationId should delete and return one location', async () => {
+      const response = await requestTest
+        .delete(`/api/v1/locations/${secondLocationId}`)
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.location).toBeTruthy();
+    });
+
+    it('DELETE /api/v1/locations/:locationId should fail to delete a location with error 404', async () => {
+      const response = await requestTest
+        .delete(`/api/v1/locations/${wrongLocationId}`)
+        .set('Cookie', userCookie);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body.location).toBeFalsy();
+    });
   });
 });
