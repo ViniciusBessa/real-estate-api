@@ -5,6 +5,22 @@ import cookieParser from 'cookie-parser';
 
 const app: Express = express();
 
+// Security middlewares
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimiter from 'express-rate-limit';
+
+app.set('trust_proxy', 1);
+app.use(helmet());
+app.use(cors());
+app.use(
+  rateLimiter({
+    windowMs: 5 * 60 * 1000, // Five minutes
+    max: 1000,
+    message: 'Limite de requests alcançado',
+  })
+);
+
 // Express middlewares
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
