@@ -21,11 +21,10 @@ describe('Location Endpoints', () => {
 
   describe('Location endpoints with a user that is not logged', () => {
     // Testing the route GET /api/v1/locations
-    it('GET /api/v1/locations should return five locations', async () => {
+    it('GET /api/v1/locations should return all locations', async () => {
       const response = await requestTest.get('/api/v1/locations');
       expect(response.statusCode).toBe(StatusCodes.OK);
       expect(response.body.locations).toBeTruthy();
-      expect(response.body.numberOfLocations).toBe(5);
     });
 
     it('GET /api/v1/locations?city=rio should return two locations', async () => {
@@ -56,6 +55,21 @@ describe('Location Endpoints', () => {
       const response = await requestTest.get(`/api/v1/locations/badId`);
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route GET /api/v1/locations/states
+    it('GET /api/v1/locations/states should return all the states', async () => {
+      const response = await requestTest.get('/api/v1/locations/states');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.states).toBeTruthy();
+    });
+
+    // Testing the route GET /api/v1/locations/cities/:state
+    it('GET /api/v1/locations/cities/:state should return all cities from one state', async () => {
+      const response = await requestTest.get('/api/v1/locations/cities/rio');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.cities).toBeTruthy();
+      expect(response.body.numberOfCities).toBe(2);
     });
 
     // Testing the route POST /api/v1/locations
@@ -104,11 +118,10 @@ describe('Location Endpoints', () => {
     });
 
     // Testing the route GET /api/v1/locations
-    it('GET /api/v1/locations should return five locations', async () => {
+    it('GET /api/v1/locations should return all locations', async () => {
       const response = await requestTest.get('/api/v1/locations');
       expect(response.statusCode).toBe(StatusCodes.OK);
       expect(response.body.locations).toBeTruthy();
-      expect(response.body.numberOfLocations).toBe(5);
     });
 
     it('GET /api/v1/locations?city=rio should return two locations', async () => {
@@ -139,6 +152,21 @@ describe('Location Endpoints', () => {
       const response = await requestTest.get(`/api/v1/locations/badId`);
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body.location).toBeFalsy();
+    });
+
+    // Testing the route GET /api/v1/locations/states
+    it('GET /api/v1/locations/states should return all the states', async () => {
+      const response = await requestTest.get('/api/v1/locations/states');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.states).toBeTruthy();
+    });
+
+    // Testing the route GET /api/v1/locations/cities/:state
+    it('GET /api/v1/locations/cities/:state should return all cities from one state', async () => {
+      const response = await requestTest.get('/api/v1/locations/cities/acre');
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.cities).toBeTruthy();
+      expect(response.body.numberOfCities).toBe(1);
     });
 
     // Testing the route POST /api/v1/locations

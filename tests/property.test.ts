@@ -59,6 +59,16 @@ describe('Property Endpoints', () => {
       expect(response.body.property).toBeFalsy();
     });
 
+    // Testing the route GET /api/v1/properties/user/:userId
+    it('GET /api/v1/properties/user/:userId should return all announces of one user', async () => {
+      const response = await requestTest.get(
+        '/api/v1/properties/user/6274554605ebef471497257e'
+      );
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.properties).toBeTruthy();
+      expect(response.body.numberOfProperties).toBe(1);
+    });
+
     // Testing the route POST /api/v1/properties
     it('POST /api/v1/properties should fail with error 401', async () => {
       const response = await requestTest.post('/api/v1/properties').send({
@@ -150,6 +160,16 @@ describe('Property Endpoints', () => {
       const response = await requestTest.get(`/api/v1/properties/badId`);
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body.property).toBeFalsy();
+    });
+
+    // Testing the route GET /api/v1/properties/user/:userId
+    it('GET /api/v1/properties/user/:userId should return all announces of one user', async () => {
+      const response = await requestTest.get(
+        '/api/v1/properties/user/6274554605ebef471497257e'
+      );
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.properties).toBeTruthy();
+      expect(response.body.numberOfProperties).toBe(1);
     });
 
     // Testing the route POST /api/v1/properties

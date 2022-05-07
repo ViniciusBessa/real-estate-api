@@ -4,6 +4,8 @@ import restrictAccess from '../middlewares/restrict-access';
 import {
   getAllLocations,
   getSpecificLocation,
+  getAllStates,
+  getAllCitiesFromState,
   createLocation,
   updateLocation,
   deleteLocation,
@@ -15,6 +17,8 @@ router
   .route('/')
   .get(getAllLocations)
   .post(loginRequired, restrictAccess('admin'), createLocation);
+router.route('/states').get(getAllStates);
+router.route('/cities/:state').get(getAllCitiesFromState);
 router
   .route('/:locationId')
   .get(getSpecificLocation)

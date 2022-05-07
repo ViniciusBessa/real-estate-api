@@ -39,6 +39,11 @@ const UserSchema = new mongoose.Schema(
       default: 'user',
       trim: true,
     },
+    propertiesFavorited: {
+      type: [mongoose.Types.ObjectId],
+      ref: 'Property',
+      default: [],
+    },
   },
   { timestamps: true }
 );

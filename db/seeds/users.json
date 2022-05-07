@@ -9,13 +9,19 @@
     "_id": "6274554605ebef471497257e",
     "name": "JohnSmith",
     "email": "john.smith@gmail.com",
-    "password": "password1"
+    "password": "password1",
+    "propertiesFavorited": [
+      "62745b5512a234d707653267"
+    ]
   },
   {
     "_id": "6274554605ebef471497257f",
     "name": "MichaelAlley",
     "email": "michael.alley@gmail.com",
     "password": "password2",
-    "role": "admin"
+    "role": "admin",
+    "propertiesFavorited": [
+      "62745b5512a234d707653267"
+    ]
   }
 ]

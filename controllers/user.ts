@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors';
 import asyncWrapper from '../middlewares/async-wrapper';
+import Property from '../models/Property';
 import User from '../models/User';
 import { createToken, sendTokenAsCookie } from '../utils/jwt';
 
@@ -23,6 +24,57 @@ const getSingleUser = asyncWrapper(async (req: Request, res: Response) => {
 const getCurrentUser = asyncWrapper(async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 });
+
+const getPropertiesFavorited = asyncWrapper(
+  async (req: Request, res: Response) => {
+    const { user } = req;
+    let favorites = await User.findById(user.userId)
+      .populate('propertiesFavorited')
+      .select('propertiesFavorited');
+    favorites = favorites.propertiesFavorited;
+    res
+      .status(StatusCodes.OK)
+      .json({ favorites, numberOfFavorites: favorites.length });
+  }
+);
+
+const addPropertyToFavorites = asyncWrapper(
+  async (req: Request, res: Response) => {
+    const { propertyId } = req.params;
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      throw new BadRequestError('Por favor, informe um ID válido de imóvel');
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $push: { propertiesFavorited: propertyId },
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+    res.status(StatusCodes.OK).json({ user });
+  }
+);
+
+const removePropertyFromFavorites = asyncWrapper(
+  async (req: Request, res: Response) => {
+    const { propertyId } = req.params;
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      throw new BadRequestError('Por favor, informe um ID válido de imóvel');
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $pull: { propertiesFavorited: propertyId },
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+    res.status(StatusCodes.OK).json({ user });
+  }
+);
 
 const updateUsername = asyncWrapper(async (req: Request, res: Response) => {
   const { user } = req;
@@ -89,4 +141,7 @@ export {
   updateUsername,
   updateEmail,
   updatePassword,
+  getPropertiesFavorited,
+  addPropertyToFavorites,
+  removePropertyFromFavorites,
 };

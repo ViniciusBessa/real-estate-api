@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { NotFoundError } from '../errors';
+import { BadRequestError, NotFoundError } from '../errors';
 import asyncWrapper from '../middlewares/async-wrapper';
 import Location from '../models/Location';
 import LocationQuery from '../types/location-query';
@@ -47,6 +47,40 @@ const getSpecificLocation = asyncWrapper(
   }
 );
 
+const getAllStates = asyncWrapper(async (req: Request, res: Response) => {
+  const locations = await Location.find().select('state').sort('state');
+  let states: string[] = locations.map((location) => location.state);
+
+  // Filtering possible duplicates
+  const seenStates: any = {};
+  states = states.filter((state) =>
+    seenStates[state] ? false : (seenStates[state] = true)
+  );
+  res.status(StatusCodes.OK).json({ states, numberOfStates: states.length });
+});
+
+const getAllCitiesFromState = asyncWrapper(
+  async (req: Request, res: Response) => {
+    const { state } = req.params;
+
+    if (!state) {
+      throw new BadRequestError('Por favor, informe um estado');
+    }
+    const stateRegex = { $regex: state, $options: 'i' };
+    const locations = await Location.find({ state: stateRegex })
+      .select('city')
+      .sort('city');
+    let cities: string[] = locations.map((location) => location.city);
+
+    // Filtering possible duplicates
+    const seenCities: any = {};
+    cities = cities.filter((city) =>
+      seenCities[city] ? false : (seenCities[city] = true)
+    );
+    res.status(StatusCodes.OK).json({ cities, numberOfCities: cities.length });
+  }
+);
+
 const createLocation = asyncWrapper(async (req: Request, res: Response) => {
   const location = await Location.create(req.body);
   res.status(StatusCodes.CREATED).json({ location });
@@ -82,6 +116,8 @@ const deleteLocation = asyncWrapper(async (req: Request, res: Response) => {
 export {
   getAllLocations,
   getSpecificLocation,
+  getAllStates,
+  getAllCitiesFromState,
   createLocation,
   updateLocation,
   deleteLocation,

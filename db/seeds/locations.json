@@ -15,6 +15,11 @@
     "city": "São Paulo"
   },
   {
+    "_id": "62735070d47b87fb917de79a",
+    "state": "São Paulo",
+    "city": "Santos"
+  },
+  {
     "_id": "62735070d47b87fb917de79e",
     "state": "Amazonas",
     "city": "Manaus"
@@ -23,5 +28,10 @@
     "_id": "62735070d47b87fb917de79f",
     "state": "Rio de Janeiro",
     "city": "Rio de Janeiro"
+  },
+  {
+    "_id": "62735070d47b87fb917de791",
+    "state": "Rio de Janeiro",
+    "city": "Niterói"
   }
 ]

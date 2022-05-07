@@ -62,11 +62,7 @@ const PropertySchema = new mongoose.Schema(
     },
     images: {
       type: [String],
-      minlength: [
-        1,
-        'Por favor, informe o URL de pelo menos uma foto do imóvel',
-      ],
-      maxlength: [10, 'Só são permitidas até dez fotos do imóvel'],
+      default: [],
     },
   },
   { timestamps: true }
