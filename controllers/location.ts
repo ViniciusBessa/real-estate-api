@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequestError, NotFoundError } from '../errors';
+import { NotFoundError } from '../errors';
 import asyncWrapper from '../middlewares/async-wrapper';
 import Location from '../models/Location';
 import LocationQuery from '../types/location-query';
+import StateQuery from '../types/state-query';
 
 const getAllLocations = asyncWrapper(async (req: Request, res: Response) => {
   const { state, city, select, sort } = req.query;
@@ -52,34 +53,32 @@ const getAllStates = asyncWrapper(async (req: Request, res: Response) => {
   let states: string[] = locations.map((location) => location.state);
 
   // Filtering possible duplicates
-  const seenStates: any = {};
+  const seenStates: { [key: string]: boolean } = {};
   states = states.filter((state) =>
     seenStates[state] ? false : (seenStates[state] = true)
   );
   res.status(StatusCodes.OK).json({ states, numberOfStates: states.length });
 });
 
-const getAllCitiesFromState = asyncWrapper(
-  async (req: Request, res: Response) => {
-    const { state } = req.params;
+const getAllCities = asyncWrapper(async (req: Request, res: Response) => {
+  const { state } = req.query;
+  const queryObject: StateQuery = {};
 
-    if (!state) {
-      throw new BadRequestError('Por favor, informe um estado');
-    }
-    const stateRegex = { $regex: state, $options: 'i' };
-    const locations = await Location.find({ state: stateRegex })
-      .select('city')
-      .sort('city');
-    let cities: string[] = locations.map((location) => location.city);
-
-    // Filtering possible duplicates
-    const seenCities: any = {};
-    cities = cities.filter((city) =>
-      seenCities[city] ? false : (seenCities[city] = true)
-    );
-    res.status(StatusCodes.OK).json({ cities, numberOfCities: cities.length });
+  if (state) {
+    queryObject.state = { $regex: state as string, $options: 'i' };
   }
-);
+  const locations = await Location.find(queryObject)
+    .select('city')
+    .sort('city');
+  let cities: string[] = locations.map((location) => location.city);
+
+  // Filtering possible duplicates
+  const seenCities: { [key: string]: boolean } = {};
+  cities = cities.filter((city) =>
+    seenCities[city] ? false : (seenCities[city] = true)
+  );
+  res.status(StatusCodes.OK).json({ cities, numberOfCities: cities.length });
+});
 
 const createLocation = asyncWrapper(async (req: Request, res: Response) => {
   const location = await Location.create(req.body);
@@ -117,7 +116,7 @@ export {
   getAllLocations,
   getSpecificLocation,
   getAllStates,
-  getAllCitiesFromState,
+  getAllCities,
   createLocation,
   updateLocation,
   deleteLocation,

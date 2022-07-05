@@ -10,14 +10,14 @@ const createToken = (payload: UserInfo): string => {
 
 const verifyToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET as string);
-}
+};
 
-const sendTokenAsCookie = (res: Response, token: string) => {
+const sendTokenAsCookie = (res: Response, token: string): void => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     signed: true,
-  })
-}
+  });
+};
 
 export { createToken, verifyToken, sendTokenAsCookie };

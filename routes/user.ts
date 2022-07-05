@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import apicache from 'apicache';
 import loginRequired from '../middlewares/login-required';
 import restrictAccess from '../middlewares/restrict-access';
 import {
@@ -14,13 +15,16 @@ import {
 } from '../controllers/user';
 
 const router: Router = Router();
+const cache = apicache.middleware;
 
-router.route('/').get(loginRequired, restrictAccess('admin'), getAllUsers);
+router
+  .route('/')
+  .get(loginRequired, restrictAccess('admin'), cache('2 minutes'), getAllUsers);
 router.route('/currentUser').get(loginRequired, getCurrentUser);
 router
   .route('/currentUser/propertiesFavorited')
   .get(loginRequired, getPropertiesFavorited);
-router.route('/:userId').get(getSingleUser);
+router.route('/:userId').get(cache('2 minutes'), getSingleUser);
 router.route('/currentUser/username').patch(loginRequired, updateUsername);
 router.route('/currentUser/email').patch(loginRequired, updateEmail);
 router.route('/currentUser/password').patch(loginRequired, updatePassword);

@@ -66,7 +66,7 @@ describe('Location Endpoints', () => {
 
     // Testing the route GET /api/v1/locations/cities/:state
     it('GET /api/v1/locations/cities/:state should return all cities from one state', async () => {
-      const response = await requestTest.get('/api/v1/locations/cities/rio');
+      const response = await requestTest.get('/api/v1/locations/cities?state=rio');
       expect(response.statusCode).toBe(StatusCodes.OK);
       expect(response.body.cities).toBeTruthy();
       expect(response.body.numberOfCities).toBe(2);
@@ -163,7 +163,7 @@ describe('Location Endpoints', () => {
 
     // Testing the route GET /api/v1/locations/cities/:state
     it('GET /api/v1/locations/cities/:state should return all cities from one state', async () => {
-      const response = await requestTest.get('/api/v1/locations/cities/acre');
+      const response = await requestTest.get('/api/v1/locations/cities?state=acre');
       expect(response.statusCode).toBe(StatusCodes.OK);
       expect(response.body.cities).toBeTruthy();
       expect(response.body.numberOfCities).toBe(1);

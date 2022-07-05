@@ -36,9 +36,11 @@ const checkImages = (files: Express.Multer.File[]) => {
         `Imagens com a extensão .${imageExtension} não são permitidas`
       );
     }
-    // Throwing an error if the file size is bigger than one megabyte 
+    // Throwing an error if the file size is bigger than one megabyte
     else if (file.size > oneMegaByte) {
-      throw new BadRequestError('Só são permitidos arquivos de até um megabyte');
+      throw new BadRequestError(
+        'Só são permitidos arquivos de até um megabyte'
+      );
     }
   });
 };

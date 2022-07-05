@@ -107,7 +107,7 @@ const getSpecificProperty = asyncWrapper(
     if (!propertyId) {
       throw new BadRequestError('Informe o ID do imóvel');
     }
-    const property = await Property.findById(propertyId).populate('announcer');
+    const property = await Property.findById(propertyId).populate('location');
 
     if (!property) {
       throw new NotFoundError(
@@ -121,7 +121,7 @@ const getSpecificProperty = asyncWrapper(
 const getPropertiesOfOneUser = asyncWrapper(
   async (req: Request, res: Response) => {
     const { userId } = req.params;
-    const properties = await Property.find({ announcer: userId });
+    const properties = await Property.find({ announcer: userId }).populate('location');
     res
       .status(StatusCodes.OK)
       .json({ properties, numberOfProperties: properties.length });
