@@ -19,12 +19,12 @@ const cache = apicache.middleware;
 
 router
   .route('/')
-  .get(loginRequired, restrictAccess('admin'), cache('2 minutes'), getAllUsers);
+  .get(loginRequired, restrictAccess('admin'), cache('1 day'), getAllUsers);
 router.route('/currentUser').get(loginRequired, getCurrentUser);
 router
   .route('/currentUser/propertiesFavorited')
   .get(loginRequired, getPropertiesFavorited);
-router.route('/:userId').get(cache('2 minutes'), getSingleUser);
+router.route('/:userId').get(cache('1 day'), getSingleUser);
 router.route('/currentUser/username').patch(loginRequired, updateUsername);
 router.route('/currentUser/email').patch(loginRequired, updateEmail);
 router.route('/currentUser/password').patch(loginRequired, updatePassword);

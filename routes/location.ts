@@ -17,13 +17,13 @@ const cache = apicache.middleware;
 
 router
   .route('/')
-  .get(cache('5 minutes'), getAllLocations)
+  .get(cache('1 day'), getAllLocations)
   .post(loginRequired, restrictAccess('admin'), createLocation);
-router.route('/states').get(cache('5 minutes'), getAllStates);
-router.route('/cities').get(cache('5 minutes'), getAllCities);
+router.route('/states').get(cache('1 day'), getAllStates);
+router.route('/cities').get(cache('1 day'), getAllCities);
 router
   .route('/:locationId')
-  .get(cache('2 minutes'), getSpecificLocation)
+  .get(cache('1 day'), getSpecificLocation)
   .patch(loginRequired, restrictAccess('admin'), updateLocation)
   .delete(loginRequired, restrictAccess('admin'), deleteLocation);
 

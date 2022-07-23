@@ -12,7 +12,7 @@ import rateLimiter from 'express-rate-limit';
 
 app.set('trust_proxy', 1);
 app.use(helmet());
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
 app.use(
   rateLimiter({
     windowMs: 5 * 60 * 1000, // Five minutes
