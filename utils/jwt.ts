@@ -13,10 +13,13 @@ const verifyToken = (token: string) => {
 };
 
 const sendTokenAsCookie = (res: Response, token: string): void => {
+  const thirtyDays = 1000 * 60 * 60 * 24 * 30;
   res.cookie('token', token, {
     httpOnly: true,
+    expires: new Date(Date.now() + thirtyDays),
     secure: process.env.NODE_ENV === 'production',
     signed: true,
+    sameSite: 'none',
   });
 };
 
