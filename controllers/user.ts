@@ -29,7 +29,7 @@ const getPropertiesFavorited = asyncWrapper(
   async (req: Request, res: Response) => {
     const { user } = req;
     let favorites = await User.findById(user.userId)
-      .populate('propertiesFavorited')
+      .populate({ path: 'propertiesFavorited', populate: { path: 'location' } })
       .select('propertiesFavorited');
     favorites = favorites.propertiesFavorited;
     res
