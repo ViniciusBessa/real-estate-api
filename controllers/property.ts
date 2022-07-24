@@ -74,13 +74,6 @@ const getAllProperties = asyncWrapper(async (req: Request, res: Response) => {
     const selectList: string = (<string>select).split(',').join(' ');
     propertiesResult.select(selectList);
   }
-  // Pagination
-  if (page) {
-    const pageLimit = Number(limit) || 6;
-    const requestedPage = Number(page) - 1;
-    const skippedItems = pageLimit * requestedPage;
-    propertiesResult.skip(skippedItems).limit(pageLimit);
-  }
   let properties = await propertiesResult;
 
   // Filtering the properties by the provided state
@@ -94,6 +87,14 @@ const getAllProperties = asyncWrapper(async (req: Request, res: Response) => {
   if (city) {
     const cityRegex = new RegExp(city as string, 'i');
     properties = properties.filter((property) => cityRegex.test(property.location.city));
+  }
+  // Pagination
+  if (page) {
+    const pageLimit = Number(limit) || 6;
+    const requestedPage = Number(page) - 1;
+    const skippedItems = pageLimit * requestedPage;
+    properties.splice(0, skippedItems)
+    properties = properties.slice(0, pageLimit);
   }
   res
     .status(StatusCodes.OK)
