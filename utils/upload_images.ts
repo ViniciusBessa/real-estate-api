@@ -7,7 +7,7 @@ const cloudinaryUploader = cloudinary.v2.uploader;
 const uploadFromBuffer = (file: Express.Multer.File) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinaryUploader.upload_stream(
-      { folder: 'real_state' },
+      { folder: 'real_estate' },
       (err: any, result: any) => {
         if (result) {
           resolve(result);

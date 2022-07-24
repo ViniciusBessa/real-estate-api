@@ -18,7 +18,7 @@ const upload = multer();
 
 router
   .route('/')
-  .get(cache('1 day'), getAllProperties)
+  .get(cache('10 minutes'), getAllProperties)
   .post(
     loginRequired,
     restrictAccess('admin', 'announcer'),
@@ -27,9 +27,9 @@ router
   );
 router
   .route('/:propertyId')
-  .get(cache('1 day'), getSpecificProperty)
+  .get(cache('10 minutes'), getSpecificProperty)
   .patch(loginRequired, restrictAccess('admin', 'announcer'), updateProperty)
   .delete(loginRequired, restrictAccess('admin', 'announcer'), deleteProperty);
-router.route('/user/:userId').get(cache('1 day'), getPropertiesOfOneUser);
+router.route('/user/:userId').get(cache('10 minutes'), getPropertiesOfOneUser);
 
 export default router;
