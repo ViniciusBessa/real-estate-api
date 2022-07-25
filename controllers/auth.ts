@@ -37,7 +37,10 @@ const loginUser = asyncWrapper(async (req: Request, res: Response) => {
 });
 
 const logoutUser = asyncWrapper(async (req: Request, res: Response) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+  });
   res.status(StatusCodes.NO_CONTENT).json();
 });
 
