@@ -26,9 +26,9 @@ const checkImages = (files: Express.Multer.File[]) => {
 
   files.forEach((file: Express.Multer.File) => {
     // Getting the file extension
-    const imageExtension: string | undefined = file.originalname
-      .split('.')
-      .at(-1);
+    const imageName: string[] = file.originalname
+      .split('.');
+    const imageExtension: string? = imageName[imageName.length - 1];
 
     // Throwing an error if the file extension is not allowed
     if (!allowedExtensions.includes(imageExtension as string)) {
